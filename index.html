@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Sala</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: white;
+  text-align: center;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #fff3;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.progress {
+  height: 10px;
+  background: yellow;
+  width: 0%;
+  border-radius: 10px;
+  transition: 0.4s;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.card {
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+img {
+  width: 120px;
+  border-radius: 50%;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🏫 Quem você é na sala?</h1>
+
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div id="quiz" class="card"></div>
+</div>
+
+<script>
+
+const questions = [
+  {
+    question: "O professor passa trabalho...",
+    answers: [
+      { text: "Faço na hora", type: "nerd" },
+      { text: "Depois eu faço", type: "procrastinador" },
+      { text: "Copio de alguém", type: "copiador" },
+      { text: "Nem faço", type: "bagunceiro" }
+    ]
+  },
+  {
+    question: "Na aula você...",
+    answers: [
+      { text: "Presta atenção", type: "nerd" },
+      { text: "Dorme", type: "dorminhoco" },
+      { text: "Conversa", type: "bagunceiro" },
+      { text: "Fica no celular", type: "desligado" }
+    ]
+  },
+  {
+    question: "Na prova...",
+    answers: [
+      { text: "Tiro nota alta", type: "nerd" },
+      { text: "Colo", type: "copiador" },
+      { text: "Chuto tudo", type: "desligado" },
+      { text: "Esqueci de estudar", type: "procrastinador" }
+    ]
+  },
+  {
+    question: "No intervalo você...",
+    answers: [
+      { text: "Revisa matéria", type: "nerd" },
+      { text: "Dorme", type: "dorminhoco" },
+      { text: "Zoando com geral", type: "bagunceiro" },
+      { text: "Fica no celular", type: "desligado" }
+    ]
+  },
+  {
+    question: "Quando o professor falta...",
+    answers: [
+      { text: "Fico feliz", type: "bagunceiro" },
+      { text: "Durmo", type: "dorminhoco" },
+      { text: "Estudo mesmo assim", type: "nerd" },
+      { text: "Nem apareço", type: "procrastinador" }
+    ]
+  },
+  {
+    question: "Trabalho em grupo...",
+    answers: [
+      { text: "Faço tudo", type: "nerd" },
+      { text: "Deixo pros outros", type: "procrastinador" },
+      { text: "Copio tudo", type: "copiador" },
+      { text: "Só bagunço", type: "bagunceiro" }
+    ]
+  },
+  {
+    question: "Sua mochila...",
+    answers: [
+      { text: "Organizada", type: "nerd" },
+      { text: "Uma bagunça", type: "bagunceiro" },
+      { text: "Nem sei o que tem", type: "desligado" },
+      { text: "Só abro na hora", type: "procrastinador" }
+    ]
+  },
+  {
+    question: "Professor te chama...",
+    answers: [
+      { text: "Respondo na hora", type: "nerd" },
+      { text: "Finjo que não ouvi", type: "desligado" },
+      { text: "Dou desculpa", type: "procrastinador" },
+      { text: "Faço piada", type: "bagunceiro" }
+    ]
+  }
+];
+
+let current = 0;
+let scores = {};
+
+function showQuestion() {
+  const quiz = document.getElementById("quiz");
+  const q = questions[current];
+
+  quiz.innerHTML = `<h2>${q.question}</h2>`;
+
+  q.answers.forEach(a => {
+    quiz.innerHTML += `<button onclick="answer('${a.type}')">${a.text}</button>`;
+  });
+
+  document.getElementById("progress").style.width =
+    (current / questions.length) * 100 + "%";
+}
+
+function answer(type) {
+  scores[type] = (scores[type] || 0) + 1;
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const quiz = document.getElementById("quiz");
+
+  let result = Object.keys(scores).reduce((a, b) =>
+    scores[a] > scores[b] ? a : b
+  );
+
+  const results = {
+    nerd: {
+      title: "📚 Nerd",
+      desc: "Você é o cérebro da sala!"
+    },
+    bagunceiro: {
+      title: "😈 Bagunceiro",
+      desc: "Você que anima tudo!"
+    },
+    procrastinador: {
+      title: "⏰ Procrastinador",
+      desc: "Deixa tudo pra depois 😅"
+    },
+    copiador: {
+      title: "👀 Copiador",
+      desc: "Sempre tem um plano!"
+    },
+    dorminhoco: {
+      title: "😴 Dorminhoco",
+      desc: "A aula vira cama"
+    },
+    desligado: {
+      title: "📱 Desligado",
+      desc: "Você tá em outro mundo"
+    }
+  };
+
+  quiz.innerHTML = `
+    <h2>${results[result].title}</h2>
+    <p>${results[result].desc}</p>
+    <button onclick="location.reload()">Refazer</button>
+  `;
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
